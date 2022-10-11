@@ -79,7 +79,7 @@ pip3 install py-cpuinfo
 # pylint tests require the following version. pylint==1.6.4 hangs erratically,
 # thus using the updated version of 2.5.3 only for python3 as python2 is EOL
 # and this version is not available.
-pip3 install pylint==2.15.0
+pip3 install pylint==2.10.0
 
 # pycodestyle tests require the following:
 pip3 install pycodestyle
