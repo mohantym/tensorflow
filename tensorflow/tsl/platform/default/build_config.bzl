@@ -353,77 +353,8 @@ def cc_grpc_library(
 # Re-defined protocol buffer rule to bring in the change introduced in commit
 # https://github.com/google/protobuf/commit/294b5758c373cbab4b72f35f4cb62dc1d8332b68
 # which was not part of a stable protobuf release in 04/2018.
-# TODO(jsimsa): Remove this once the protobuf dependency version is updated
-# to include the above commit.
-def py_proto_library(
-        name,
-        srcs = [],
-        deps = [],
-        py_libs = [],
-        py_extra_srcs = [],
-        include = None,
-        default_runtime = "@com_google_protobuf//:protobuf_python",
-        protoc = "@com_google_protobuf//:protoc",
-        use_grpc_plugin = False,
-        **kwargs):
-    """Bazel rule to create a Python protobuf library from proto source files
+# Removed py_proto_library as mentioned above from master
 
-    NOTE: the rule is only an internal workaround to generate protos. The
-    interface may change and the rule may be removed when bazel has introduced
-    the native rule.
-
-    Args:
-      name: the name of the py_proto_library.
-      srcs: the .proto files of the py_proto_library.
-      deps: a list of dependency labels; must be py_proto_library.
-      py_libs: a list of other py_library targets depended by the generated
-          py_library.
-      py_extra_srcs: extra source files that will be added to the output
-          py_library. This attribute is used for internal bootstrapping.
-      include: a string indicating the include path of the .proto files.
-      default_runtime: the implicitly default runtime which will be depended on by
-          the generated py_library target.
-      protoc: the label of the protocol compiler to generate the sources.
-      use_grpc_plugin: a flag to indicate whether to call the Python C++ plugin
-          when processing the proto files.
-      **kwargs: other keyword arguments that are passed to py_library.
-    """
-    outs = _proto_py_outs(srcs, use_grpc_plugin)
-
-    includes = []
-    if include != None:
-        includes = [include]
-
-    grpc_python_plugin = None
-    if use_grpc_plugin:
-        grpc_python_plugin = "//external:grpc_python_plugin"
-        # Note: Generated grpc code depends on Python grpc module. This dependency
-        # is not explicitly listed in py_libs. Instead, host system is assumed to
-        # have grpc installed.
-
-    proto_gen(
-        name = name + "_genproto",
-        srcs = srcs,
-        outs = outs,
-        gen_py = 1,
-        includes = includes,
-        plugin = grpc_python_plugin,
-        plugin_language = "grpc",
-        protoc = protoc,
-        visibility = ["//visibility:public"],
-        deps = [s + "_genproto" for s in deps],
-    )
-
-    if default_runtime and not default_runtime in py_libs + deps:
-        py_libs = py_libs + [default_runtime]
-
-    native.py_library(
-        name = name,
-        srcs = outs + py_extra_srcs,
-        deps = py_libs + deps,
-        imports = includes,
-        **kwargs
-    )
 
 def tf_proto_library_cc(
         name,
